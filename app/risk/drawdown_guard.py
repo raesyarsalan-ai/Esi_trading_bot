@@ -4,7 +4,11 @@ class DrawdownGuard:
         self.peak = None
 
     def allow(self, equity):
+        if equity <= 0:
+            return False
+
         if self.peak is None or equity > self.peak:
             self.peak = equity
+
         dd = (self.peak - equity) / self.peak
         return dd < self.max_dd
