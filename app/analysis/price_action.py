@@ -1,11 +1,9 @@
-class AIPredictor:
-    def __init__(self, enabled=False):
-        self.enabled = enabled
+def is_pin_bar(df):
+    if len(df) < 1:
+        return False
 
-    def predict(self, features: dict):
-        if not self.enabled:
-            return 0
+    c = df.iloc[-1]
+    body = abs(c.close - c.open)
+    wick = c.high - max(c.close, c.open)
 
-        # Placeholder for ML model
-        # return +1 (buy), -1 (sell), 0 (neutral)
-        return 0
+    return body > 0 and wick > body * 2
