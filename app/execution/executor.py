@@ -6,3 +6,4 @@ def execute(exchange, side, symbol, amount):
             return exchange.create_market_sell_order(symbol, amount)
     except Exception as e:
         print(f"[EXECUTION ERROR] {e}")
+        return None
