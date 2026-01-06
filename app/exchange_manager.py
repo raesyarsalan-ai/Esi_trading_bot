@@ -11,7 +11,5 @@ def get_exchange(name):
         "apiKey": os.getenv("API_KEY"),
         "secret": os.getenv("API_SECRET"),
         "enableRateLimit": True,
-        "options": {
-            "defaultType": "spot"
-        }
+        "options": {"defaultType": "spot"}
     })
