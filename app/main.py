@@ -27,7 +27,10 @@ def main():
             range_market = is_range(df)
 
             last_price = df["close"].iloc[-1]
-            balance = exchange.fetch_balance()["total"].get("USDT", 0)
+            balance_info = exchange.fetch_balance()
+balance = balance_info["free"].get("USDT", 0)
+
+           
 
             if not guard.allow(balance):
                 print("⛔ Drawdown limit reached")
