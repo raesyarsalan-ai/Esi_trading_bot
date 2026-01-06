@@ -11,40 +11,46 @@ from app.risk.risk_manager import RiskManager
 from app.ai.predictor import AIPredictor
 from config.config import *
 
-exchange = get_exchange(EXCHANGE_NAME)
-guard = DrawdownGuard(MAX_DRAWDOWN)
-risk = RiskManager(BASE_RISK)
-ai = AIPredictor(enabled=False)
 
-print("🚀 Trading bot started...")
+def main():
+    exchange = get_exchange(EXCHANGE_NAME)
+    guard = DrawdownGuard(MAX_DRAWDOWN)
+    risk = RiskManager(BASE_RISK)
+    ai = AIPredictor(enabled=False)
 
-while True:
-    try:
-        df = fetch_ohlcv(exchange, SYMBOL, TIMEFRAME)
+    print("🚀 Trading bot started...")
 
-        market = detect_market_state(df)
-        range_market = is_range(df)
+    while True:
+        try:
+            df = fetch_ohlcv(exchange, SYMBOL, TIMEFRAME)
 
-        ai_signal = ai.predict({
-            "market": market,
-            "range": range_market
-        })
+            market = detect_market_state(df)
+            range_market = is_range(df)
 
-        signals = {
-            "trend": 1 if market == "bull" else -1,
-            "range": -1 if range_market else 1,
-            "ai": ai_signal
-        }
+            ai_signal = ai.predict({
+                "market": market,
+                "range": range_market
+            })
 
-        decision = decide(signals)
+            signals = {
+                "trend": 1 if market == "bull" else -1,
+                "range": -1 if range_market else 1,
+                "ai": ai_signal
+            }
 
-        balance = exchange.fetch_balance()["total"].get("USDT", 0)
+            decision = decide(signals)
 
-        if decision and guard.allow(balance):
-            execute(exchange, decision, SYMBOL, ORDER_SIZE)
-            print(f"[TRADE] {decision.upper()} executed")
+            balance = exchange.fetch_balance()["total"].get("USDT", 0)
 
-    except Exception as e:
-        print(f"[MAIN LOOP ERROR] {e}")
+            if decision and guard.allow(balance):
+                execute(exchange, decision, SYMBOL, ORDER_SIZE)
+                print(f"[TRADE] {decision.upper()} executed")
 
-    time.sleep(60)
+        except Exception as e:
+            print(f"[MAIN LOOP ERROR] {e}")
+
+        time.sleep(60)
+
+
+if __name__ == "__main__":
+    main()
