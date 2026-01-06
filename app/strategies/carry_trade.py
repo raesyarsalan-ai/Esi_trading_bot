@@ -1,3 +1,5 @@
-def carry(funding_rate_positive):
-    if funding_rate_positive:
+def trend_follow(trend):
+    if trend == "bull":
         return "buy"
+    elif trend == "bear":
+        return "sell"
