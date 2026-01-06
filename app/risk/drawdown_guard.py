@@ -4,11 +4,18 @@ class DrawdownGuard:
         self.peak = None
 
     def allow(self, equity):
-        if equity <= 0:
-            return False
+        # اگر هنوز موجودی واقعی نداریم، ترید را متوقف نکن
+        if equity is None or equity <= 0:
+            return True
 
-        if self.peak is None or equity > self.peak:
+        # اولین بار، peak را مقداردهی کن
+        if self.peak is None:
             self.peak = equity
+            return True
+
+        if equity > self.peak:
+            self.peak = equity
+            return True
 
         dd = (self.peak - equity) / self.peak
         return dd < self.max_dd
